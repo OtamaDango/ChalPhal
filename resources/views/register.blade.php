@@ -1,6 +1,9 @@
 @extends('home')
 
     @section('content')
+    @if(session('status'))
+    <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-4">
@@ -16,7 +19,7 @@
                     <input type="password" name="password" placeholder="Password" class="form-control" required>
                    </div>
                    <div class="mb-3">
-                    <input type="password" name="password_confirmation" placeholder="Confirm Password" class="form-control" required>
+                    <input type="password" name="confirm_password" placeholder="Confirm Password" class="form-control" required>
                    </div>
                     <button type="submit" class="btn btn-primary w-100">Register</button>
                 </form>

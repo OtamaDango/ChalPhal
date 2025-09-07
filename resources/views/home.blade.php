@@ -43,16 +43,34 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav mx-auto" >
                             <li class="nav-item"><a class="nav-link active px-3" href="/">Home</a></li>
+                            @auth
+                            <li class="nav-item"><a class="nav-link active px-3" href="/dashboard">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link active px-3" href="/profile">Profile</a></li>
+                            @endauth
                             <li class="nav-item"><a class="nav-link active px-3" href="/about">About</a></li>
-                            <li class="nav-item"><a class= "nav-link active px-3"href="/contact">Contact</a></li>
-                            <li class="nav-item"><a class="nav-link active px-3"href="/login">Login</a></li>
-                            <li class="nav-item"><a class = "nav-link active px-3"href="/register">Register</a></li>
+                            <li class="nav-item"><a class= "nav-link active px-3" href="/contact">Contact</a></li>
+                            @guest
+                            <li class="nav-item"><a class="nav-link active px-3" href="/login">Login</a></li>
+                            <li class="nav-item"><a class = "nav-link active px-3" href="/register">Register</a></li>
+                            @endguest
+                            @auth
+                            <li class="nav-item">
+                                <form action="/logout" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger px-3" style="display:inline; color:white;">Logout</button>
+                                </form>
+                            </li>
+                            @endauth
                         </ul>
                     </div>
                 </div>
         </header>
         </nav>
     </div>
+    @if(session('status'))
+    <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
+
     @if(request()->is('/'))
     <p>this is home page</p>
     @endif
