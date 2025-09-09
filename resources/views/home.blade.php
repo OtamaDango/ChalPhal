@@ -73,6 +73,12 @@
 
     @if(request()->is('/'))
     <p>this is home page</p>
+    <form action="/create_post" method="post">
+        @csrf
+        <input type="text" name="post_title" placeholder="Enter post title">
+        <input type="text" name="post_content" placeholder="Enter post content">    
+        <button type="submit">Submit</button>
+    </form>
     @endif
     <main class="py-4">
         @yield('content')
