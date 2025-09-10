@@ -14,7 +14,7 @@
                                     <h6 class="card-title">{{ $post->title }}</h6>
                                     <p class="card-text">{{ $post->content }}</p>
                                     <small class="text-muted">{{ $post->created_at->diffForHumans() }}</small>
-                                    <form action="/delete_post/1" method="post">
+                                    <form action="/delete_post/{{$post->post_id}}" method="post">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger float-end">Delete</button>
