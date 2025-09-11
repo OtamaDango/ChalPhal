@@ -62,6 +62,7 @@
             </div>
         </div>
     </nav>
+
     @if(request()->is('/'))
     {{-- Status message --}}
     @if(session('status'))
@@ -96,12 +97,12 @@
             </div>
         @endauth
 
-        {{-- Show posts only if $posts exists --}}
+        {{-- Show posts --}}
         @isset($posts)
             <h4 class="mb-3">All Posts</h4>
             <div class="p-3 bg-light rounded" style="height: 70vh; overflow-y: auto;">
                 @forelse($posts as $post)
-                    <div class="card mb-2 shadow-sm">
+                    <div class="card mb-3 shadow-lg">
                         <div class="card-body">
                             <h6 class="card-title fw-bold">{{ $post->title }}</h6>
                             <p class="card-text">{{ $post->content }}</p>
@@ -109,8 +110,30 @@
                                 Posted by <strong>{{ $post->user->name }}</strong> 
                                 {{ $post->created_at->diffForHumans() }}
                             </small>
+
+                            {{-- Display comments --}}
+                            @foreach($post->comments as $comment)
+                                <div class="card mt-2">
+                                    <small class="text-muted">
+                                        Posted by <strong>{{ $comment->user->name }}</strong> 
+                                        {{ $comment->created_at->diffForHumans() }}
+                                    </small>
+                                    <p>{{ $comment->comment_content }}</p>
+
+                                    {{-- Delete comment (only owner) --}}
+                                    @if(auth()->check() && auth()->id() === $comment->user_id)
+                                        <form action="/delete_comment/{{$comment->comment_id}}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger float-end">Delete Comment</button>
+                                        </form>
+                                    @endif
+                                </div>
+                            @endforeach
+
+                            {{-- Add comment form --}}
                             @if(auth()->check())
-                                <form action="/comment" method="post">
+                                <form action="/post/{{$post->post_id}}/comment" method="POST">
                                     @csrf
                                     <div class="mb-3">
                                         <input type="text" name="comment_content" class="form-control" placeholder="Add a comment..." required>
@@ -118,14 +141,16 @@
                                     <button type="submit" class="btn btn-sm btn-primary float-start">Comment</button>
                                 </form>
                             @endif
-                            {{-- Delete button only for owner --}}
-                            <form action="/delete_post/{{$post->post_id}}" method="post" class="d-inline">
+
+                            {{-- Delete post (only owner) --}}
                             @if(auth()->check() && auth()->id() === $post->user_id)
+                                <form action="/delete_post/{{$post->post_id}}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger float-end">Delete</button>
                                 </form>
                             @endif
+
                         </div>
                     </div>
                 @empty
@@ -135,9 +160,11 @@
         @endisset
     </main>
     @endif
+
     <main class="py-4">
         @yield('content')
     </main>
+
     {{-- Footer --}}
     <footer>
         <div class="bg-dark text-white text-center py-3">

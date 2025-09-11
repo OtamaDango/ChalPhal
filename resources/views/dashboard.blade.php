@@ -14,10 +14,45 @@
                                     <h6 class="card-title">{{ $post->title }}</h6>
                                     <p class="card-text">{{ $post->content }}</p>
                                     <small class="text-muted">{{ $post->created_at->diffForHumans() }}</small>
-                                    <form action="/delete_post/{{$post->post_id}}" method="post">
+
+                                    {{-- Delete Post (only owner) --}}
+                                    @if(auth()->id() === $post->user_id)
+                                        <form action="/delete_post/{{$post->post_id}}" method="post" class="d-inline float-end">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete Post</button>
+                                        </form>
+                                    @endif
+
+                                    {{-- Comments Section --}}
+                                    @foreach($post->comments as $comment)
+                                        <div class="card mt-2">
+                                            <div class="card-body p-2">
+                                                <small class="text-muted">
+                                                    Posted by <strong>{{ $comment->user->name }}</strong> 
+                                                    {{ $comment->created_at->diffForHumans() }}
+                                                </small>
+                                                <p class="mb-1">{{ $comment->comment_content }}</p>
+
+                                                {{-- Delete Comment (only owner) --}}
+                                                @if(auth()->id() === $comment->user_id)
+                                                    <form action="/delete_comment/{{$comment->comment_id}}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-danger">Delete Comment</button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                    {{-- Add Comment Form --}}
+                                    <form action="/posts/{{$post->post_id}}/comments" method="POST" class="mt-2">
                                         @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger float-end">Delete</button>
+                                        <div class="mb-2">
+                                            <input type="text" name="comment_content" class="form-control" placeholder="Add a comment..." required>
+                                        </div>
+                                        <button type="submit" class="btn btn-sm btn-primary">Comment</button>
                                     </form>
                                 </div>
                             </div>
