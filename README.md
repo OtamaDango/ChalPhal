@@ -1,6 +1,6 @@
 # ChalPhal – Community Posting & Discussion Platform
 
-ChalPhal is a web application built with **Laravel**, **PHP**, **Bootstrap**, and **SQLite**. It allows users to create posts, comment on other users' posts, and interact in a simple, clean, and responsive environment.
+ChalPhal is a web application built with **Laravel**, **PHP**, **Bootstrap**, and **MySQL**. It allows users to create posts, comment on other users' posts, and interact in a simple, clean, and responsive environment.
 
 ---
 
@@ -15,79 +15,63 @@ ChalPhal is a web application built with **Laravel**, **PHP**, **Bootstrap**, an
 
 ---
 
-## Screenshots
-
-![Home Page](path-to-screenshot/home.png)  
-![Post Detail](path-to-screenshot/post-detail.png)  
-*Add screenshots as needed.*
-
----
-
 ## Technologies Used
 
 - **Backend:** PHP, Laravel
 - **Frontend:** HTML, CSS, JavaScript, Bootstrap
-- **Database:** SQLite
+- **Database:** MySQL
 - **Version Control:** Git & GitHub
 
 ---
 
 ## Installation
 
-1. Clone the repository:
+1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/chalphal.git
+   git clone https://github.com/OtamaDango/ChalPhal.git
    cd chalphal
-Install dependencies:
+2. **Install dependencies**
+   ```bash
+    composer install
+    npm install
+    npm run dev
+3. **Set up environment**
+Copy the .env.example file to .env:
+   ```bash
+       cp .env.example .env
+   
+Open .env and configure your database:
+    ```bash
+        DB_CONNECTION=mysql
+        DB_HOST=127.0.0.1
+        DB_PORT=3306
+        DB_DATABASE=chalphal_db
+        DB_USERNAME=root
+        DB_PASSWORD=your_password
+        
+4. **Generate application key**
+    ```bash
+        php artisan key:generate
+        Run migrations
+        php artisan migrate
+8. **Start the development server**
+    ```bash
+        php artisan serve
+   
+## Usage
 
-bash
-Copy code
-composer install
-Copy .env.example to .env and set up your environment:
+- Register a new account or login using an existing account.
+- Navigate the dashboard to create, view, or delete posts.
+- Comment on other users’ posts.
+- Access About and Contact pages from the navbar.
+- Logout when finished.
 
-bash
-Copy code
-cp .env.example .env
-php artisan key:generate
-Run migrations:
+## Future Enhancements
 
-bash
-Copy code
-php artisan migrate
-Serve the application:
+- Add profile pictures for users.
+- Allow editing posts and comments.
+- Add likes/upvotes for posts and comments.
+- Implement search and filter for posts.
+- Mobile-first optimizations for better responsive design.
 
-bash
-Copy code
-php artisan serve
-Visit http://127.0.0.1:8000 in your browser.
-
-Usage
-Register a new account or log in.
-
-Create posts and view posts by other users.
-
-Comment on posts to interact with the community.
-
-Delete your own posts or comments if needed.
-
-Folder Structure
-app/ – Contains controllers and models.
-
-resources/views/ – Blade templates for UI.
-
-routes/web.php – Application routes.
-
-database/migrations/ – Database schema.
-
-Future Improvements
-Add user profiles with avatars.
-
-Implement post categories and search functionality.
-
-Add notifications for comments on posts.
-
-Mobile-first UI improvements.
-
-License
-This project is open source and free to use.
 
