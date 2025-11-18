@@ -1,87 +1,93 @@
 @extends('home')
 
 @section('content')
-    @auth
-        <div class="container mt-3">
-            <div class="row">
-                <!-- Posts Section (LEFT) -->
-                <div class="col-md-6 border-end">
-                    <h4 class="mb-3">{{ auth()->user()->name }}'s Posts</h4>
-                    <div class="p-3 bg-light rounded" style="height: 70vh; overflow-y: auto;">
-                        @forelse($posts as $post)
-                            <div class="card mb-2 shadow-sm">
-                                <div class="card-body">
-                                    <h6 class="card-title">{{ $post->title }}</h6>
-                                    <p class="card-text">{{ $post->content }}</p>
-                                    <small class="text-muted">{{ $post->created_at->diffForHumans() }}</small>
+@auth
+<div class="container py-3 text-white">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-8 col-sm-11">
 
-                                    {{-- Delete Post (only owner) --}}
-                                    @if(auth()->id() === $post->user_id)
-                                        <form action="/delete_post/{{$post->post_id}}" method="post" class="d-inline float-end">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">Delete Post</button>
-                                        </form>
-                                    @endif
+            <h4 class="mb-3 text-white">Welcome to ChalPhal, {{ auth()->user()->name }}!</h4>
 
-                                    {{-- Comments Section --}}
+            <div class="posts-wrapper">
+                @forelse($posts as $post)
+                    <div class="card post-card mb-4" style="background:#2a2a2a; border:none;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="fw-bold text-white mb-1">{{ $post->title }}</h6>
+                                    <small class="text-light fw-semibold">
+                                        Posted {{ $post->created_at->diffForHumans() }}
+                                    </small>
+                                </div>
+
+                                @if(auth()->id() === $post->user_id)
+                                    <form action="/delete_post/{{ $post->post_id }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger text-white">
+                                            Delete
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+
+                            <p class="mt-2 mb-3 text-white" style="font-size:1rem; line-height:1.5;">
+                                {{ $post->content }}
+                            </p>
+
+                            {{-- Toggle Comments Button --}}
+                            <button class="btn btn-sm btn-outline-info mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#comments-{{ $post->post_id }}" aria-expanded="false" aria-controls="comments-{{ $post->post_id }}">
+                                Comments ({{ $post->comments->count() }})
+                            </button>
+
+                            {{-- Collapsible Comments --}}
+                            <div class="collapse" id="comments-{{ $post->post_id }}">
+                                <div style="max-height:300px; overflow-y:auto;">
                                     @foreach($post->comments as $comment)
-                                        <div class="card mt-2">
-                                            <div class="card-body p-2">
-                                                <small class="text-muted">
-                                                    Posted by <strong>{{ $comment->user->name }}</strong> 
-                                                    {{ $comment->created_at->diffForHumans() }}
-                                                </small>
-                                                <p class="mb-1">{{ $comment->comment_content }}</p>
+                                        <div class="p-2 my-2" style="background:#1a1a1a; border-radius:6px; border:none;">
+                                            <small class="text-light d-block mb-1">
+                                                <strong>{{ $comment->user->name }}</strong> · {{ $comment->created_at->diffForHumans() }}
+                                            </small>
+                                            <p class="mb-2">{{ $comment->comment_content }}</p>
 
-                                                {{-- Delete Comment (only owner) --}}
-                                                @if(auth()->id() === $comment->user_id)
-                                                    <form action="/delete_comment/{{$comment->comment_id}}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger">Delete Comment</button>
-                                                    </form>
-                                                @endif
-                                            </div>
+                                            @if(auth()->id() === $comment->user_id)
+                                                <form action="/delete_comment/{{ $comment->comment_id }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger text-white">Delete</button>
+                                                </form>
+                                            @endif
                                         </div>
                                     @endforeach
-
-                                    {{-- Add Comment Form --}}
-                                    <form action="/posts/{{$post->post_id}}/comments" method="POST" class="mt-2">
-                                        @csrf
-                                        <div class="mb-2">
-                                            <input type="text" name="comment_content" class="form-control" placeholder="Add a comment..." required>
-                                        </div>
-                                        <button type="submit" class="btn btn-sm btn-primary">Comment</button>
-                                    </form>
                                 </div>
+
+                                {{-- Add Comment Form --}}
+                                @auth
+                                    <form action="/post/{{ $post->post_id }}/comment" method="POST" class="mt-2">
+                                        @csrf
+                                        <div class="input-group">
+                                            <input type="text" name="comment_content" class="form-control" style="background:#262626; border:1px solid #444; color:white;" placeholder="Write a comment..." required>
+                                            <button type="submit" class="btn btn-primary btn-sm">Comment</button>
+                                        </div>
+                                    </form>
+                                @endauth
                             </div>
-                        @empty
-                            <p>No posts yet.</p>
-                        @endforelse
-                    </div>
-                </div>
 
-                <!-- Chat Section (RIGHT) -->
-                <div class="col-md-6">
-                    <h4 class="mb-3">Chat</h4>
-                    <div class="p-3 bg-light rounded" style="height: 70vh; overflow-y: auto;">
-                        <p>Chat messages will appear here...</p>
-                    </div>
-                    <form class="mt-3">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Type a message...">
-                            <button class="btn btn-primary" type="submit">Send</button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                @empty
+                    <p class="text-center text-light">No posts yet.</p>
+                @endforelse
             </div>
-        </div>
-    @endauth
 
-    @guest
-        <p class="text-center mt-5">
-            You are not logged in. <a href="{{ url('/login') }}">Login here</a>
-        </p>
-    @endguest
+        </div>
+    </div>
+</div>
+@endauth
+
+@guest
+<p class="text-center mt-5 text-white">
+    You are not logged in. <a href="{{ url('/login') }}" class="text-info">Login here</a>
+</p>
+@endguest
 @endsection

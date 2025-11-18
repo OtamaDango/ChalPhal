@@ -1,177 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChalPhal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .navbar-brand:hover {
-            color:#85868a !important;
-            transition:color 0.3s ease;
-        }
-        .navbar-nav .nav-link:hover {
-            background-color:#455b6f;
-            color:#000 !important;
-            border-radius:5px;
-            transition:background-color 0.3s ease;
-        }
-        .navbar-nav .nav-link {
-            transition:background-color 0.3s ease;
-        }
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        main {
-            flex: 1;
-        }
-    </style>
-</head>
-<body>
-    {{-- Navbar --}}
-    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand px-2" href="/">ChalPhal</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link active px-3" href="/">Home</a></li>
-                    @auth
-                        <li class="nav-item"><a class="nav-link active px-3" href="/dashboard">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link active px-3" href="/profile">Profile</a></li>
-                    @endauth
-                    <li class="nav-item"><a class="nav-link active px-3" href="/about">About</a></li>
-                    <li class="nav-item"><a class="nav-link active px-3" href="/contact">Contact</a></li>
-                    @guest
-                        <li class="nav-item"><a class="nav-link active px-3" href="/login">Login</a></li>
-                        <li class="nav-item"><a class="nav-link active px-3" href="/register">Register</a></li>
-                    @endguest
-                    @auth
-                        <li class="nav-item mx-auto" >
-                            <form action="/logout" method="POST" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn btn-danger px-3" style="color:white;">Logout</button>
-                            </form>
-                        </li>
-                    @endauth
-                </ul>
-            </div>
-        </div>
-    </nav>
+@extends('layouts.app')
 
-    @if(request()->is('/'))
-    {{-- Status message --}}
-    @if(session('status'))
-        <div class="alert alert-success text-center m-3">{{ session('status') }}</div>
-    @endif
+@section('content')
 
-    <main class="container my-4">
-        <h2 class="text-center mb-4">Welcome to ChalPhal</h2>
-
-        {{-- Post creation form (only for logged-in users) --}}
-        @auth
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Create a Post</h5>
-                    <form action="/create_post" method="post">
-                        @csrf
-                        <div class="mb-3">
-                            <input type="text" name="post_title" class="form-control" placeholder="Enter post title" required>
-                        </div>
-                        <div class="mb-3">
-                            <textarea name="post_content" class="form-control" rows="3" placeholder="Write something..." required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit Post</button>
-                    </form>
-                </div>
-            </div>
-        @else
-            <div class="alert alert-info text-center">
-                <a href="/login" class="btn btn-primary btn-sm">Login</a> or 
-                <a href="/register" class="btn btn-success btn-sm">Register</a> 
-                to create a post.
-            </div>
-        @endauth
-
-        {{-- Show posts --}}
-        @isset($posts)
-            <h4 class="mb-3">All Posts</h4>
-            <div class="p-3 bg-light rounded" style="height: 70vh; overflow-y: auto;">
+@section('content')
+    @isset($posts)
+        <div class="posts-wrapper">
+            <div class="posts-scroll">
                 @forelse($posts as $post)
-                    <div class="card mb-3 shadow-lg">
+                    <div class="card post-card mb-4" style="background:#2a2a2a; border:none;">
                         <div class="card-body">
-                            <h6 class="card-title fw-bold">{{ $post->title }}</h6>
-                            <p class="card-text">{{ $post->content }}</p>
-                            <small class="text-muted">
-                                Posted by <strong>{{ $post->user->name }}</strong> 
-                                {{ $post->created_at->diffForHumans() }}
-                            </small>
-
-                            {{-- Display comments --}}
-                            @foreach($post->comments as $comment)
-                                <div class="card mt-2">
+                            {{-- Post Header --}}
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
                                     <small class="text-muted">
-                                        Posted by <strong>{{ $comment->user->name }}</strong> 
-                                        {{ $comment->created_at->diffForHumans() }}
+                                        Posted by <strong>{{ $post->user->name }}</strong> · {{ $post->created_at->diffForHumans() }}
                                     </small>
-                                    <p>{{ $comment->comment_content }}</p>
-
-                                    {{-- Delete comment (only owner) --}}
-                                    @if(auth()->check() && auth()->id() === $comment->user_id)
-                                        <form action="/delete_comment/{{$comment->comment_id}}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger float-end">Delete Comment</button>
-                                        </form>
-                                    @endif
+                                    <h6 class="fw-bold text-white mb-1">{{ $post->title }}</h6>
                                 </div>
-                            @endforeach
 
-                            {{-- Add comment form --}}
-                            @if(auth()->check())
-                                <form action="/post/{{$post->post_id}}/comment" method="POST">
+                                @if(auth()->id() === $post->user_id)
+                                    <form action="{{ url('/delete_post/'.$post->post_id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger text-white">Delete</button>
+                                    </form>
+                                @endif
+                            </div>
+
+                            {{-- Post Content --}}
+                            <p class="mt-2 mb-3 text-white">{{ $post->content }}</p>
+
+                            {{-- Toggle Comments --}}
+                            <button class="btn btn-sm btn-outline-info mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#comments-{{ $post->post_id }}">
+                                Comments ({{ $post->comments->count() }})
+                            </button>
+
+                            <div class="collapse" id="comments-{{ $post->post_id }}">
+                                <div style="max-height:300px; overflow-y:auto;">
+                                    @foreach($post->comments as $comment)
+                                        <div class="p-2 my-2" style="background:#1a1a1a; border-radius:6px;">
+                                            <small class="text-light d-block mb-1">
+                                                <strong>{{ $comment->user->name }}</strong> · {{ $comment->created_at->diffForHumans() }}
+                                            </small>
+                                            <p class="mb-2">{{ $comment->comment_content }}</p>
+
+                                            @if(auth()->id() === $comment->user_id)
+                                                <form action="{{ url('/delete_comment/'.$comment->comment_id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger text-white">Delete</button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                @auth
+                                {{-- Add Comment Form --}}
+                                <form action="{{ url('/post/'.$post->post_id.'/comment') }}" method="POST" class="mt-2">
                                     @csrf
-                                    <div class="mb-3">
-                                        <input type="text" name="comment_content" class="form-control" placeholder="Add a comment..." required>
+                                    <div class="input-group">
+                                        <input type="text" name="comment_content" class="form-control" style="background:#262626; border:1px solid #444; color:white;" placeholder="Write a comment..." required>
+                                        <button type="submit" class="btn btn-primary btn-sm">Comment</button>
                                     </div>
-                                    <button type="submit" class="btn btn-sm btn-primary float-start">Comment</button>
                                 </form>
-                            @endif
-
-                            {{-- Delete post (only owner) --}}
-                            @if(auth()->check() && auth()->id() === $post->user_id)
-                                <form action="/delete_post/{{$post->post_id}}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger float-end">Delete</button>
-                                </form>
-                            @endif
+                                @endauth
+                            </div>
 
                         </div>
                     </div>
                 @empty
-                    <p>No posts yet.</p>
+                    <p class="text-center text-light">No posts yet.</p>
                 @endforelse
             </div>
-        @endisset
-    </main>
-    @endif
-
-    <main class="py-4">
-        @yield('content')
-    </main>
-
-    {{-- Footer --}}
-    <footer>
-        <div class="bg-dark text-white text-center py-3">
-            &copy; 2024 ChalPhal. All rights reserved.
         </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    @endisset
+@endsection
