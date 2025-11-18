@@ -40,7 +40,7 @@ Copy the .env.example file to .env:
    ```bash
        cp .env.example .env
    
-Open .env and configure your database:
+4. **Open .env and configure your database:**
     ```bash
         DB_CONNECTION=mysql
         DB_HOST=127.0.0.1
