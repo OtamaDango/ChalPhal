@@ -15,6 +15,28 @@ ChalPhal is a web application built with **Laravel**, **PHP**, **Bootstrap**, an
 
 ---
 
+## Screenshots
+
+### Home
+![Home Page](assets/home.png)
+
+### Dashboard
+![Dashboard Page](assets/dashboard.png)
+
+### Create-Post
+![Crearte-Post Page](assets/create-post.png)
+
+### Comments
+![Comment Page](assets/comments.png)
+
+### Login
+![Login Page](assets/login.png)
+
+### Register
+![Register Page](assets/register.png)
+
+---
+
 ## Technologies Used
 
 - **Backend:** PHP, Laravel
@@ -38,25 +60,25 @@ ChalPhal is a web application built with **Laravel**, **PHP**, **Bootstrap**, an
 3. **Set up environment**
 Copy the .env.example file to .env:
    ```bash
-       cp .env.example .env
+   cp .env.example .env
    
 4. **Open .env and configure your database:**
     ```bash
-        DB_CONNECTION=mysql
-        DB_HOST=127.0.0.1
-        DB_PORT=3306
-        DB_DATABASE=chalphal_db
-        DB_USERNAME=root
-        DB_PASSWORD=your_password
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=chalphal_db
+    DB_USERNAME=root
+    DB_PASSWORD=your_password
         
 4. **Generate application key**
     ```bash
-        php artisan key:generate
-        Run migrations
-        php artisan migrate
+    php artisan key:generate
+    Run migrations
+    php artisan migrate
 8. **Start the development server**
     ```bash
-        php artisan serve
+    php artisan serve
    
 ## Usage
 
