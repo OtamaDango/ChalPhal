@@ -59,7 +59,7 @@
         .comment-card,
         .card,
         .card-body {
-            background: transparent !important;
+            background: transparent ;
             border: none !important;
             box-shadow: none !important;
         }
