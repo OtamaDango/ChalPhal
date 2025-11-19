@@ -30,10 +30,10 @@ ChalPhal is a web application built with **Laravel**, **PHP**, **Bootstrap**, an
 ![Comment Page](assets/comments.png)
 
 ### Login
-![Login Page](assets/login.png)
+![Login Page](assets/register.png)
 
 ### Register
-![Register Page](assets/register.png)
+![Register Page](assets/login.png)
 
 ---
 
