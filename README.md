@@ -60,7 +60,7 @@ ChalPhal is a community-based web application built with **Laravel**, **PHP**, *
     npm run dev
    ```
 3. **Set up environment**
-Update your .env file with your database credentials.
+    - Update your .env file with your database credentials.
    ```bash
    cp .env.example .env
    ```  
