@@ -1,6 +1,6 @@
 # ChalPhal – Community Posting & Discussion Platform
 
-ChalPhal is a web application built with **Laravel**, **PHP**, **Bootstrap**, and **MySQL**. It allows users to create posts, comment on other users' posts, and interact in a simple, clean, and responsive environment.
+ChalPhal is a community-based web application built with **Laravel**, **PHP**, **Bootstrap**, and **MySQL**. It allows users to create posts, comment on discussions, and interact within a clean and responsive UI.
 
 ---
 
@@ -30,10 +30,10 @@ ChalPhal is a web application built with **Laravel**, **PHP**, **Bootstrap**, an
 ![Comment Page](assets/comments.png)
 
 ### Login
-![Login Page](assets/register.png)
+![Login Page](assets/login.png)
 
 ### Register
-![Register Page](assets/login.png)
+![Register Page](assets/register.png)
 
 ---
 
@@ -52,34 +52,38 @@ ChalPhal is a web application built with **Laravel**, **PHP**, **Bootstrap**, an
    ```bash
    git clone https://github.com/OtamaDango/ChalPhal.git
    cd chalphal
+   ```
 2. **Install dependencies**
    ```bash
     composer install
     npm install
     npm run dev
+   ```
 3. **Set up environment**
-Copy the .env.example file to .env:
+Update your .env file with your database credentials.
    ```bash
    cp .env.example .env
-   
-4. **Open .env and configure your database:**
-    ```bash
-    DB_CONNECTION=mysql
-    DB_HOST=127.0.0.1
-    DB_PORT=3306
-    DB_DATABASE=chalphal_db
-    DB_USERNAME=root
-    DB_PASSWORD=your_password
-        
+   ```  
 4. **Generate application key**
     ```bash
     php artisan key:generate
     Run migrations
     php artisan migrate
+    ```
 8. **Start the development server**
     ```bash
     php artisan serve
-   
+    ```
+## Populate Sample Data (Optional)
+
+- After setting up the project, you can populate the database with sample data for testing:
+    ```bash
+    php artisan db:seed
+    ```
+- This drops all tables, re-runs migrations, and seeds fresh sample data.
+   ```bash
+   php artisan migrate:fresh --seed
+    ```
 ## Usage
 
 - Register a new account or login using an existing account.
